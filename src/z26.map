@@ -1,0 +1,505 @@
+;;Z26.MAP
+;;
+;;This file contains:
+;;
+;;  	- unique codes for up to 8 items that can be given/taken/used
+;;  	- pointers and text describing the items
+;;	- up to 8 triggers that can unlock rooms
+;;	- a map of the playing area
+;;	- data blocks defining what happens in a room
+;;	- and mostly, all the text unique to the actions in each room
+;;
+;;A completely new game can be "written" by modifying these data
+;;structures.  The main program expects a couple of things--five
+;;pre-defined labels: intro0-intro4, for blocks of text
+;;telling the background story; and invList, a block of 8 words pointing
+;;at the text descriptions of your inventory items.  These need to be
+;;ascending ordered to sync up with the codes for each item.  The main
+;;code will have to be modified if you don't want the background text.
+;;Otherwise, you're pretty free to build a map, rooms, text, etc., 
+;;any way you like.
+;;---------------------------------------------------------------
+;;
+;; AJT--modified this to intro0-intro3
+
+; codes for items
+;-----------------------
+ring 		equ 1
+stuff		equ 2
+sword 		equ 4
+phial 		equ 8
+
+; codes for triggers
+;-------------------
+stridertrigger equ 1
+nazgultrigger equ 2
+samtrigger equ 4
+fotrtrigger equ 8
+balrogtrigger equ 16
+lorientrigger equ 32
+boromirtrigger equ 64
+shiretrigger equ 128
+
+invList
+; addresses of text describing all inventory items
+;-------------------------------------------------
+	wordOff ringText
+	wordOff stuffText
+	wordOff swordText
+	wordOff phialText
+
+;Actual text for the items
+;-------------------------
+ringText 
+	lineL T,H,E,sp,O,N,E,sp,R,I,N,G
+stuffText
+	lineL H,E,A,V,Y,sp,S,T,U,F,F,0
+swordText
+	lineL E,L,V,I,S,H,sp,S,W,O,R,D
+phialText
+	lineL A,sp,S,T,A,R,sp,P,H,I,A,L
+
+GameMap
+;-------
+;The map is super simple.  Without modifying the main code in Z26.ASM, it
+;should contain any number of rows of 16 bit addresses pointing to the
+;data block for each room.  Each row should have exactly 5 rooms.  There
+;is no wraparound feature in the main code, so the edges should contain
+;impassable rooms, though the right hand margin will wrap to the row below
+;not causing much trouble other than in the lowest right room.
+;--------------------------------------------------------------------------
+
+	 mapRow northm,  northm, northm, northm, havens
+	 mapRow shire,   bree,   wastes, rdell,  mountains
+ 	 mapRow nope,    nope,   nope,   moria,  lorien
+	 mapRow nope,	 nope,	 nope,   nope,   anduin
+	 mapRow end,     later,  nope,   nope,   nope
+	 mapRow nope,	 nope,	 nope,	 nope,	 nope
+
+
+;Room data blocks and text
+;-------------------------
+;Still pretty rough and inefficient, the structure is as follows:
+;
+; 	byte 	used for
+;-----------------------
+; 	0	defines actions that can take place in room (0 = can not enter)
+;	1	defines an item that is seen upon LOOKing
+;	2	defines an item that can be taken (must first have been seen)
+;	3	defines an item that can be used
+;	4	defines an item that can be given
+;	5	defines what item must have been used to initiate talking
+;	6	defines an item to be moved to triggerFlag upon giving/talking
+;	7	defines what item must be in triggerFlag to allow entry
+;	8,9	address of text for initial entry
+;	10,11	address of text upon LOOKing
+;	12,13	address of text upon TAKEing
+;	14,15	address of text upon USEing
+;	16,17	address of text upon GIVEing
+;	18,19	address of text upon TALKing
+;	20,21	address of text when triggerFlag NOT true
+;
+;Rooms with zero in byte 0, are impassable, and don't use any further data
+;structure.  The address of their one text message is assumed to be in
+;bytes 1 and 2.  All others need to have the above structure regardles of
+;which features they are using.
+;------------------------------------------------------------------------------	
+shire
+	dc.b #giveRoom|#mustRoom,0,0,0,#stuff,0,#samtrigger,#shiretrigger
+	wordOff shireEntry
+	wordOff shireLook
+	dc.w #0,#0
+	wordOff shireGive
+	dc.w #0,rdellCant
+
+shireEntry
+	lineL T,H,E,sp,S,H,I,R,E,_colon,0,0
+	lineL B,R,E,E,sp,L,I,E,S,sp,T,O
+	lineT T,H,E,sp,E,A,S,T,dot,0,0,0
+;	EOT
+
+shireLook
+	lineL S,A,M,sp,I,S,sp,H,E,R,E,dot
+	lineL H,E,sp,W,A,N,T,S,sp,T,O,0
+	lineT G,O,sp,W,I,T,H,sp,Y,O,U,dot
+;	EOT
+
+shireGive
+	lineL S,A,M,sp,T,A,K,E,S,sp,0,0
+	lineL T,H,E,sp,B,I,G,sp,P,A,C,K
+	lineL A,N,D,sp,C,H,E,E,R,S,_colon,0
+	lineL _apostrophe,Y,A,Y,sp,M,I,S,T,E,R,0
+	lineT F,R,O,D,O,_exclamation,_apostrophe,0,0,0,0,0
+;	EOT
+
+bree
+	dc.b #mustRoom|#useRoom|#talkRoom,#0,#0
+	dc.b #ring,#0,#ring,#stridertrigger,#samtrigger
+	wordOff breeEntry
+	wordOff breeLook
+	dc.w    #0
+	wordOff breeUse
+	dc.w    #0
+	wordOff breeTalk
+	wordOff breeCant
+	
+breeEntry
+	lineL T,H,E,sp,P,R,A,N,C,I,N,G
+	lineT P,O,N,Y,sp,I,N,sp,B,R,E,E
+;   EOT
+breeLook
+	lineL G,A,N,D,A,L,F,sp,I,S,0,0
+	lineL N,O,T,sp,H,E,R,E,dot,0,0,0
+	blank
+	lineL B,A,R,L,I,M,A,N,0,0,0,0
+	lineT B,R,I,N,G,S,sp,B,E,E,R,dot
+;	EOT
+breeUse
+	lineL Y,O,U,sp,D,R,I,N,K,0,0,0
+	lineL T,O,O,sp,M,U,C,H,sp,A,L,E
+	lineL A,N,D,sp,P,U,T,sp,O,N,0,0
+	lineL T,H,E,sp,R,I,N,G,dot,dot,dot,0
+	blank
+	lineL A,sp,D,A,R,K,sp,M,A,N,0,0
+	lineL W,A,T,C,H,E,S,sp,Y,O,U,0
+	lineT I,N,T,E,N,T,L,Y,dot,0,0,0
+;	EOT
+breeTalk
+	lineL S,T,R,I,D,E,R,sp,S,A,Y,S
+	lineL H,E,sp,W,I,L,L,sp,L,E,A,D
+	lineL Y,O,U,sp,T,O,sp,0,0,0,0,0
+	lineT R,I,V,E,N,D,E,L,L,dot,0,0
+;	EOT
+breeCant
+	lineL Y,O,U,R,sp,P,A,C,K,sp,I,S
+	lineL T,O,O,sp,H,E,A,V,Y,dot,dot,dot
+	lineT S,O,M,E,sp,H,E,L,P,_question,0,0
+;	EOT
+
+wastes
+	dc.b #talkRoom|#useRoom|#mustRoom,#0,#0,#ring,#0,#ring
+	dc.b #nazgultrigger,#stridertrigger
+	wordOff wastesEntry
+	wordOff wastesLook
+	dc.w #0
+	wordOff wastesUse
+	dc.w #0
+	wordOff wastesTalk
+	wordOff wastesCant
+wastesEntry
+	lineL T,H,E,sp,W,A,S,T,E,S,0,0
+	lineL O,F,sp,E,R,I,A,D,O,R,dot,0
+	lineL B,R,E,E,sp,I,S,sp,W,E,S,T
+	lineL R,I,V,E,N,D,E,L,L,_comma,0,0
+	lineT E,A,S,T,dot,0,0,0,0,0,0,0
+;	EOT
+wastesLook
+	lineL B,L,A,C,K,sp,R,I,D,E,R,S
+	lineT A,P,P,R,O,A,C,H,_exclamation,0,0,0
+;	EOT
+wastesUse
+	lineL A,G,A,I,N,_comma,sp,Y,O,U,0,0
+	lineL P,U,T,sp,O,N,sp,T,H,E,0,0
+	lineL R,I,N,G,sp,A,N,D,sp,A,R,E
+	lineL S,T,A,B,B,E,D,sp,B,Y,sp,A
+	lineT R,I,N,G,W,R,A,I,T,H,_exclamation,0
+;	EOT
+wastesTalk
+	lineL _apostrophe,A,A,R,G,H,_exclamation,_apostrophe,sp,Y,O,U
+	lineL M,O,A,N,sp,W,E,A,K,L,Y,dot,0
+	blank
+	lineL S,T,R,I,D,E,R,sp,S,A,Y,S
+	lineL _apostrophe,W,E,sp,M,U,S,T,sp,G,E,T
+	lineL T,O,sp,R,I,V,E,N,D,E,L,L
+	lineL S,O,O,N,sp,O,R,sp,Y,O,U,0
+	lineT W,I,L,L,sp,D,I,E,_exclamation,_apostrophe,0,0
+;	EOT
+wastesCant
+	lineL Y,O,U,sp,W,O,U,L,D,sp,B,E
+	lineL H,O,P,E,L,E,S,S,L,Y,0,0
+	lineT L,O,S,T,dot,0,0,0,0,0,0,0
+;	EOT
+
+rdell 
+        dc.b #takeRoom|#giveRoom|#mustRoom
+        dc.b #sword,#sword,#0,#ring,#0,#fotrtrigger,#nazgultrigger
+        wordOff rdellEntry
+        wordOff rdellLook
+        wordOff rdellTake
+        dc.w #0,rdellGive,#0
+        wordOff rdellCant
+rdellEntry
+        lineL R,I,V,E,N,D,E,L,L,_comma,0,0
+        lineT A,T,sp,L,A,S,T,dot,0,0,0,0
+;        EOT
+rdellLook
+        lineL B,I,L,B,O,sp,O,F,F,E,R,S
+        lineL Y,O,U,sp,H,I,S,0,0,0,0,0
+        lineL S,W,O,R,D,dot,0,0,0,0,0,0
+        blank
+        lineL E,L,R,O,N,D,sp,N,E,E,D,S
+        lineL T,H,E,sp,R,I,N,G,sp,T,O,0
+        lineL S,T,A,R,T,sp,T,H,E,0,0,0
+        lineT C,O,U,N,C,I,L,dot,0,0,0,0
+;        EOT
+rdellTake
+        lineL Y,O,U,sp,A,C,C,E,P,T,0,0
+        lineT S,T,I,N,G,dot,0,0,0,0,0,0
+;        EOT
+rdellGive
+        lineL O,O,P,S,_exclamation,sp,Y,O,U,0,0,0
+        lineL H,A,V,E,sp,A,G,R,E,E,D,0
+        lineL T,O,sp,T,A,K,E,sp,T,H,E,0
+        lineL R,I,N,G,sp,T,O,sp,0,0,0,0
+        lineL M,O,R,D,O,R,dot,0,0,0,0,0
+	blank
+	lineL Y,O,U,sp,M,U,S,T,sp,G,O,0
+	lineT S,O,U,T,H,dot,0,0,0,0,0,0
+;        EOT
+rdellCant
+        lineL Y,O,U,sp,W,A,N,D,E,R,0,0
+        lineT A,I,M,L,E,S,S,L,Y,dot,0,0
+;        EOT
+
+moria
+	dc.b #talkRoom|#mustRoom|#useRoom,#0,#0,#sword,#0
+	dc.b #sword,#balrogtrigger,#fotrtrigger
+	wordOff moriaEntry
+	wordOff moriaLook
+	dc.w #0
+	wordOff moriaUse
+	dc.w #0
+	dc.w moriaTalk
+	wordOff moriaCant
+moriaEntry
+	lineL M,O,R,I,A,sp,I,S,0,0,0,0
+	lineT V,E,R,Y,sp,S,C,A,R,Y,dot,0
+;	EOT
+moriaLook
+	lineL E,E,E,A,G,H,_exclamation,0,0,0,0,0
+	lineT O,R,C,S,_exclamation,0,0,0,0,0,0,0
+;	EOT
+moriaUse
+	lineL T,H,E,sp,O,R,C,S,sp,A,N,D
+	lineL T,R,O,L,L,sp,A,R,E,0,0,0
+	lineL D,E,F,E,A,T,E,D,dot,0,0,0
+	blank
+	lineL G,A,N,D,A,L,F,0,0,0,0,0
+	lineL W,A,N,T,S,sp,T,O,0,0,0,0
+	lineL T,A,L,K,sp,A,B,O,U,T,0,0
+	lineL G,O,L,L,U,M,sp,A,N,D,0,0
+	lineT B,I,L,B,O,dot,0,0,0,0,0,0
+;	EOT
+moriaTalk
+	lineL _apostrophe,P,I,T,Y,sp,S,T,A,Y,E,D
+	lineL H,I,S,sp,H,A,N,D,dot,_apostrophe,0,0
+	blank
+	lineL E,E,E,A,G,H,_exclamation,0,0,0,0,0
+	lineL B,A,L,R,O,G,_exclamation,0,0,0,0,0
+	blank
+	lineL G,A,N,D,A,L,F,0,0,0,0,0
+	lineL F,A,L,L,S,sp,I,N,T,O,0,0
+	lineT S,H,A,D,O,W,dot,0,0,0,0,0
+;	EOT
+moriaCant
+	lineL O,N,sp,Y,O,U,R,sp,O,W,N,_question
+	lineT N,O,T,sp,S,M,A,R,T,dot,0,0
+;	EOT
+lorien
+	dc.b #mustRoom|#giveRoom|#takeRoom,#phial,#phial,#0
+	dc.b #ring,#0,#lorientrigger,#balrogtrigger
+	wordOff lorienEntry
+	wordOff lorienLook
+	wordOff lorienTake
+	dc.w #0
+	wordOff lorienGive
+	dc.w #0
+	wordOff rdellCant
+lorienEntry
+	lineL T,H,E,sp,R,E,A,L,M,sp,O,F
+	lineT G,A,L,A,D,R,I,E,L,dot,0,0
+;	EOT
+lorienLook
+	lineL G,A,L,A,D,R,I,E,L,0,0,0
+	lineL H,A,S,sp,A,sp,R,I,N,G,dot,0
+	blank
+	lineL S,H,E,sp,O,F,F,E,R,S,sp,A
+	lineL G,L,O,W,I,N,G,0,0,0,0,0
+	lineT P,H,I,A,L,dot,0,0,0,0,0,0
+;	EOT
+lorienTake
+	lineL Y,O,U,sp,T,A,K,E,sp,T,H,E
+	lineL P,H,I,A,L,sp,O,F,0,0,0,0
+	lineT E,A,R,E,N,D,I,L,dot,0,0,0
+;	EOT
+lorienGive
+	lineL G,A,L,A,D,R,I,E,L,0,0,0
+	lineL R,E,S,I,S,T,S,0,0,0,0,0
+	lineL T,E,M,P,T,A,T,I,O,N,dot,0
+	blank
+	lineL T,H,E,N,sp,S,H,E,0,0,0,0
+	lineL G,I,V,E,S,sp,Y,O,U,sp,A,0
+	lineT S,W,A,N,sp,B,O,A,T,dot,0,0
+;	EOT
+
+end
+	dc.b #mustRoom,#0,#0,#0,#0,#0,#0,#boromirtrigger
+	wordOff endEntry
+	wordOff endLook
+	dc.w #0,#0,#0,#0,endCant
+endEntry
+	lineL Y,O,U,sp,A,N,D,sp,S,A,M,0
+	lineL L,O,O,K,sp,O,U,T,0,0,0,0
+	lineL O,V,E,R,sp,T,H,E,0,0,0,0
+	lineL E,M,Y,N,sp,M,U,I,L,dot,0,0
+	blank
+	lineL E,N,D,sp,O,F,sp,P,A,R,T,0
+	lineT O,N,E,dot,0,0,0,0,0,0,0,0
+;	EOT
+endLook
+	lineL M,O,R,D,O,R,sp,L,I,E,S,0
+	lineT T,O,sp,T,H,E,sp,E,A,S,T,dot
+;	EOT
+endCant
+	lineL B,O,R,O,M,I,R,0,0,0,0,0
+	lineT C,H,A,S,E,S,sp,Y,O,U,_exclamation,0
+;	EOT
+
+anduin
+	dc.b #talkRoom|#mustRoom|#useRoom,#0,#0,#ring,#0,#ring
+	dc.b #boromirtrigger,#lorientrigger
+	wordOff anduinEntry
+	wordOff anduinLook
+	dc.w #0
+	wordOff anduinUse
+	dc.w #0
+	wordOff anduinTalk
+	wordOff anduinCant
+anduinEntry
+	lineL T,H,E,sp,A,N,D,U,I,N,0,0
+	lineL R,I,V,E,R,sp,A,T,sp,T,O,L
+	lineT B,R,A,N,D,I,R,dot,0,0,0,0
+;	EOT
+anduinLook
+	lineL B,O,R,O,M,I,R,0,0,0,0,0
+	lineL T,R,I,E,S,sp,T,O,sp,G,E,T
+	lineT T,H,E,sp,R,I,N,G,_exclamation,0,0,0
+;	EOT
+anduinUse
+	lineL Y,O,U,sp,E,S,C,A,P,E,0,0
+	lineL B,O,R,O,M,I,R,sp,B,Y,0,0
+	lineL W,E,A,R,I,N,G,sp,T,H,E,0
+	lineL R,I,N,G,dot,0,0,0,0,0,0,0
+	blank
+	lineL T,H,E,N,sp,Y,O,U,sp,R,U,N
+	lineT I,N,T,O,sp,A,R,A,G,O,R,N
+;	EOT
+anduinTalk
+	lineL _apostrophe,W,H,A,T,_comma,sp,D,O,0,0,0
+	lineL Y,O,U,sp,W,A,N,T,sp,I,T,0
+	lineL T,O,O,_question,_apostrophe,0,0,0,0,0,0,0
+	blank
+	lineL A,R,A,G,O,R,N,sp,I,S,0,0
+	lineT B,A,F,F,L,E,D,dot,0,0,0,0
+;	EOT
+anduinCant
+	lineT H,O,W,_question,sp,S,W,I,M,_question,0,0
+;	EOT
+northm
+	dc.b #0
+	wordOff northText
+
+northText
+	lineL L,E,A,V,E,sp,T,H,E,0,0,0
+	lineL N,O,R,T,H,sp,T,O,sp,T,H,E
+	lineT D,U,N,E,D,A,I,N,dot,0,0,0
+;	EOT
+
+havens
+	dc.b #0
+	wordOff havensText
+havensText
+	lineL Y,O,U,sp,C,A,N,_apostrophe,T,sp,G,O
+	lineL T,O,sp,T,H,E,sp,G,R,E,Y,0
+	lineT H,A,V,E,N,S,dot,dot,Y,E,T,_exclamation
+;	EOT
+
+nope
+	dc.b #0
+	wordOff nopeText
+nopeText
+	lineL Y,O,U,R,sp,D,E,S,T,I,N,Y
+	lineL D,O,E,S,sp,N,O,T,sp,L,I,E
+	lineT T,H,A,T,sp,W,A,Y,dot,0,0,0
+;	EOT
+
+mountains
+	dc.b #0
+	wordOff mountainsText
+mountainsText
+	lineL T,H,E,sp,M,I,S,T,Y,0,0,0
+	lineL M,O,U,N,T,A,I,N,S,0,0,0
+	lineT A,R,E,sp,T,O,O,sp,H,I,G,H
+;	EOT
+
+later
+	dc.b #0
+	wordOff laterText
+laterText
+	lineL Y,O,U,R,sp,J,O,U,R,N,E,Y
+	lineL T,O,sp,M,O,R,D,O,R,0,0,0
+	lineL W,I,L,L,sp,A,P,P,E,A,R,0
+	lineL I,N,sp,T,H,E,sp,T,W,O,0,0
+	lineT T,O,W,E,R,S,dot,dot,dot,0,0,0
+;	EOT
+
+intro0
+	lineL F,E,L,L,O,W,S,H,I,P,0,0
+	lineL O,F,sp,T,H,E,sp,R,I,N,G,0
+	blank
+	lineL B,Y,sp,J,dot,R,dot,R,dot,0,0,0
+	lineL T,O,L,K,I,E,N,0,0,0,0,0
+	lineL F,I,L,M,sp,B,Y,sp,P,dot,0,0
+	lineL J,A,C,K,S,O,N,0,0,0,0,0
+	blank
+	lineL I,T,_apostrophe,S,sp,P,A,R,O,D,Y,dot
+	blank
+	lineL A,T,A,R,I,sp,V,C,S,0,0,0
+	lineT V,E,R,S,I,O,N,sp,B,Y,_colon,0
+;   EOT
+intro1
+	lineL O,N,E,sp,O,F,sp,T,H,E,0,0
+	lineL B,R,U,C,E,S,dot,0,0,0,0,0
+	blank
+	lineL B,A,S,E,D,sp,O,N,0,0,0,0
+	lineL D,A,R,K,sp,M,A,G,E,sp,0,0
+	lineL B,Y,sp,G,R,E,G,0,0,0,0,0
+	lineL T,R,O,U,T,M,A,N,dot,0,0,0
+	blank
+	lineL G,A,M,E,sp,E,N,G,I,N,E,0
+	lineL I,M,P,R,O,V,E,M,E,N,T,S
+	lineL B,Y,sp,T,H,O,M,A,S,0,0,0
+	lineT J,E,N,T,Z,S,C,H,dot,0,0,0
+;	EOT
+intro2
+	lineL B,I,L,B,O,_apostrophe,S,sp,R,I,N,G
+	lineL W,A,S,_colon,0,0,0,0,0,0,0,0
+	blank
+	lineL T,H,E,sp,O,N,E,sp,R,I,N,G
+	blank
+	lineL T,H,E,sp,F,A,T,E,sp,O,F,0
+	lineL T,H,E,sp,W,O,R,L,D,sp,I,S
+	lineL I,N,sp,Y,O,U,R,0,0,0,0,0
+	lineT H,A,N,D,S,dot,0,0,0,0,0,0
+;	EOT
+intro3	
+	lineL G,A,N,D,A,L,F,sp,S,A,Y,S
+	lineL Y,O,U,sp,M,U,S,T,0,0,0,0
+	lineL M,E,E,T,sp,H,I,M,sp,A,T,0
+	lineL B,R,E,E,dot,sp,D,O,sp,N,O,T
+	lineL W,E,A,R,sp,T,H,E,0,0,0,0
+	lineT R,I,N,G,_exclamation,0,0,0,0,0,0,0
+;	EOT
+
+
+	dc.b "A. Thornton/T. Jentzsch/G. Troutman"

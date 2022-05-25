@@ -1,0 +1,226 @@
+;;Z26.FON
+;;
+;;This is the font used in Z26. The data must exist within a single page
+;;boundary to display correctly.  If the main source is modified, it may
+;;be necessary to re-locate, or use the ALIGN 256 pseudo-op to fix wacky
+;;displays.  This font is 6 scan lines tall.  Taller fonts will work with
+;;only slight modification to the main source, but the additional bytes
+;;needed may not make that wise.
+;;
+;;Also note that the font contains no digits or certain letters like Q or Z.
+;;-------------------------------------------------------------------------
+
+;   align 256
+
+_question
+       dc.b $18 ; |   XX   | $F501
+       dc.b $00 ; |        | $F502
+       dc.b $18 ; |   XX   | $F503
+       dc.b $0E ; |    XXX | $F504
+       dc.b $C6 ; |XX   XX | $F505
+       dc.b $7C ; | XXXXX  | $F506
+_exclamation
+       dc.b $18 ; |   XX   | $F507
+       dc.b $00 ; |        | $F508
+       dc.b $18 ; |   XX   | $F509
+       dc.b $18 ; |   XX   | $F50A
+       dc.b $18 ; |   XX   | $F50B
+       dc.b $18 ; |   XX   | $F50C
+_apostrophe
+       dc.b $00 ; |        | $F513
+       dc.b $00 ; |        | $F514
+       dc.b $00 ; |        | $F515
+_comma
+       dc.b $60 ; | XX     | $F516
+_period
+       dc.b $30 ; |  XX    | $F517
+       dc.b $30 ; |  XX    | $F518
+_space
+       dc.b $00 ; |        | $F519
+       dc.b $00 ; |        | $F51A
+       dc.b $00 ; |        | $F51B
+       dc.b $00 ; |        | $F51C
+       dc.b $00 ; |        | $F51D
+       dc.b $00 ; |        | $F51E
+_colon
+       dc.b $30 ; |  XX    | $F51F
+       dc.b $30 ; |  XX    | $F520
+       dc.b $00 ; |        | $F521
+       dc.b $30 ; |  XX    | $F522
+       dc.b $30 ; |  XX    | $F523
+       dc.b $00 ; |        | $F524
+A
+       dc.b $C6 ; |XX   XX | $F525
+       dc.b $C6 ; |XX   XX | $F526
+       dc.b $FE ; |XXXXXXX | $F527
+       dc.b $C6 ; |XX   XX | $F528
+       dc.b $6C ; | XX XX  | $F529
+       dc.b $38 ; |  XXX   | $F52A
+B
+       dc.b $FC ; |XXXXXX  | $F52B
+       dc.b $C6 ; |XX   XX | $F52C
+       dc.b $C6 ; |XX   XX | $F52D
+       dc.b $D8 ; |XX XX   | $F52E
+       dc.b $CC ; |XX  XX  | $F52F
+       dc.b $F8 ; |XXXXX   | $F530
+C
+       dc.b $3C ; |  XXXX  | $F531
+       dc.b $66 ; | XX  XX | $F532
+       dc.b $C0 ; |XX      | $F533
+       dc.b $C0 ; |XX      | $F534
+       dc.b $66 ; | XX  XX | $F535
+       dc.b $3C ; |  XXXX  | $F536
+D
+       dc.b $F8 ; |XXXXX   | $F537
+       dc.b $CC ; |XX  XX  | $F538
+       dc.b $C6 ; |XX   XX | $F539
+       dc.b $C6 ; |XX   XX | $F53A
+       dc.b $CC ; |XX  XX  | $F53B
+       dc.b $F8 ; |XXXXX   | $F53C
+E
+       dc.b $FE ; |XXXXXXX | $F50D
+       dc.b $C0 ; |XX      | $F50E
+       dc.b $C0 ; |XX      | $F50F
+       dc.b $F8 ; |XXXXX   | $F510
+       dc.b $C0 ; |XX      | $F511
+       dc.b $FE ; |XXXXXXX | $F512
+F
+       dc.b $C0 ; |XX      | $F53D
+       dc.b $C0 ; |XX      | $F53E
+       dc.b $C0 ; |XX      | $F53F
+       dc.b $FC ; |XXXXXX  | $F540
+       dc.b $C0 ; |XX      | $F541
+       dc.b $FE ; |XXXXXXX | $F542
+G
+       dc.b $3E ; |  XXXXX | $F543
+       dc.b $66 ; | XX  XX | $F544
+       dc.b $C6 ; |XX   XX | $F545
+       dc.b $CE ; |XX  XXX | $F546
+       dc.b $60 ; | XX     | $F547
+       dc.b $3E ; |  XXXXX | $F548
+U
+       dc.b $7C ; | XXXXX  | $F549
+       dc.b $C6 ; |XX   XX | $F54A
+       dc.b $C6 ; |XX   XX | $F54B
+H
+       dc.b $C6 ; |XX   XX | $F54C
+       dc.b $C6 ; |XX   XX | $F54D
+       dc.b $C6 ; |XX   XX | $F54E
+       dc.b $FE ; |XXXXXXX | $F54F
+       dc.b $C6 ; |XX   XX | $F550
+       dc.b $C6 ; |XX   XX | $F551
+J
+       dc.b $7C ; | XXXXX  | $F552
+       dc.b $C6 ; |XX   XX | $F553
+       dc.b $C6 ; |XX   XX | $F554
+       dc.b $06 ; |     XX | $F555
+       dc.b $06 ; |     XX | $F556
+       dc.b $06 ; |     XX | $F557
+K
+       dc.b $CE ; |XX  XXX | $F558
+       dc.b $DC ; |XX XXX  | $F559
+       dc.b $F8 ; |XXXXX   | $F55A
+       dc.b $D8 ; |XX XX   | $F55B
+       dc.b $CC ; |XX  XX  | $F55C
+       dc.b $C6 ; |XX   XX | $F55D
+L
+       dc.b $FE ; |XXXXXXX | $F55E
+       dc.b $C0 ; |XX      | $F55F
+       dc.b $C0 ; |XX      | $F560
+       dc.b $C0 ; |XX      | $F561
+       dc.b $C0 ; |XX      | $F562
+       dc.b $C0 ; |XX      | $F563
+M
+       dc.b $C6 ; |XX   XX | $F564
+       dc.b $C6 ; |XX   XX | $F565
+       dc.b $D6 ; |XX X XX | $F566
+       dc.b $FE ; |XXXXXXX | $F567
+       dc.b $EE ; |XXX XXX | $F568
+       dc.b $C6 ; |XX   XX | $F569
+N
+       dc.b $C6 ; |XX   XX | $F56A
+       dc.b $CE ; |XX  XXX | $F56B
+       dc.b $FE ; |XXXXXXX | $F56C
+       dc.b $FE ; |XXXXXXX | $F56D
+       dc.b $E6 ; |XXX  XX | $F56E
+       dc.b $C6 ; |XX   XX | $F56F
+O
+       dc.b $7C ; | XXXXX  | $F570
+       dc.b $C6 ; |XX   XX | $F571
+       dc.b $C6 ; |XX   XX | $F572
+       dc.b $C6 ; |XX   XX | $F573
+       dc.b $C6 ; |XX   XX | $F574
+       dc.b $7C ; | XXXXX  | $F575
+P
+       dc.b $C0 ; |XX      | $F576
+       dc.b $C0 ; |XX      | $F577
+       dc.b $FC ; |XXXXXX  | $F578
+       dc.b $C6 ; |XX   XX | $F579
+       dc.b $C6 ; |XX   XX | $F57A
+       dc.b $FC ; |XXXXXX  | $F57B
+;Q
+;       dc.b $7A ; | XXXX X | $FB6A
+;       dc.b $CC ; |XX  XX  | $FB6B
+;       dc.b $DE ; |XX XXXX | $FB6C
+;       dc.b $C6 ; |XX   XX | $FB6E
+;       dc.b $C6 ; |XX   XX | $FB6F
+;       dc.b $7C ; | XXXXX  | $FB70
+R
+       dc.b $CE ; |XX  XXX | $F57C
+       dc.b $DC ; |XX XXX  | $F57D
+       dc.b $F8 ; |XXXXX   | $F57E
+       dc.b $CE ; |XX  XXX | $F57F
+       dc.b $C6 ; |XX   XX | $F580
+       dc.b $FC ; |XXXXXX  | $F581
+S
+       dc.b $7C ; | XXXXX  | $F582
+       dc.b $C6 ; |XX   XX | $F583
+       dc.b $06 ; |     XX | $F584
+       dc.b $7C ; | XXXXX  | $F585
+       dc.b $C0 ; |XX      | $F586
+       dc.b $78 ; | XXXX   | $F587
+T
+       dc.b $30 ; |  XX    | $F588
+       dc.b $30 ; |  XX    | $F589
+       dc.b $30 ; |  XX    | $F58A
+       dc.b $30 ; |  XX    | $F58B
+       dc.b $30 ; |  XX    | $F58C
+       dc.b $FC ; |XXXXXX  | $F58D
+V
+       dc.b $38 ; |  XXX   | $F58E
+       dc.b $6C ; | XX XX  | $F58F
+       dc.b $C6 ; |XX   XX | $F590
+       dc.b $C6 ; |XX   XX | $F591
+       dc.b $C6 ; |XX   XX | $F592
+       dc.b $C6 ; |XX   XX | $F593
+W
+       dc.b $82 ; |X     X | $F594
+       dc.b $C6 ; |XX   XX | $F595
+       dc.b $EE ; |XXX XXX | $F596
+       dc.b $FE ; |XXXXXXX | $F597
+       dc.b $D6 ; |XX X XX | $F598
+       dc.b $C6 ; |XX   XX | $F599
+;X
+;       dc.b $C6 ; |XX   XX | $F59A
+;       dc.b $EE ; |XXX XXX | $F59B
+;       dc.b $38 ; |  XXX   | $F59C
+;       dc.b $7C ; | XXXXX  | $F59D
+;       dc.b $EE ; |XXX XXX | $F59E
+;       dc.b $C6 ; |XX   XX | $F59F
+I
+       dc.b $78 ; | XXXX   | $F5A0
+       dc.b $30 ; |  XX    | $F5A1
+Y
+       dc.b $30 ; |  XX    | $F5A2
+       dc.b $30 ; |  XX    | $F5A3
+       dc.b $30 ; |  XX    | $F5A4
+       dc.b $78 ; | XXXX   | $F5A5
+       dc.b $CC ; |XX  XX  | $F5A6
+       dc.b $CC ; |XX  XX  | $F5A7
+Z
+    dc.b #%11111110
+    dc.b #%01100000
+    dc.b #%00110000
+    dc.b #%00011000
+    dc.b #%00001100
+    dc.b #%11111110
